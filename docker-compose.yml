@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   php:
     image: yiisoftware/yii2-php:8.1-apache
@@ -7,3 +7,31 @@ services:
       - ./:/app:delegated
     ports:
       - '8000:80'
+    networks:
+      - yao
+    depends_on:
+      - mysql
+  mysql:
+    container_name: yao_mysql
+    image: mysql:8
+    restart: always
+    ports:
+      - '3320:3306'
+    volumes:
+      - /var/www/yao:/var/lib/mysql
+    networks:
+      - yao
+  phpmyadmin:
+    container_name: yao_phpmyadmin
+    image: phpmyadmin
+    networks:
+      - yao
+    ports:
+      - 8088:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: password
+      PMA_HOST: mysql
+networks:
+  yao:
+    driver: bridge
